@@ -1,3 +1,5 @@
+import com.alibaba.fastjson.JSON;
+import com.company.project.jwt.JwtUser;
 import com.google.common.base.CaseFormat;
 import freemarker.template.TemplateExceptionHandler;
 import org.apache.commons.lang3.StringUtils;
@@ -19,10 +21,10 @@ import static com.company.project.core.ProjectConstant.*;
 public class CodeGenerator {
     //JDBC配置，请修改为你项目的实际配置
     private static final String JDBC_URL = "jdbc:mysql://localhost:3306/"
-            + "test"//替换此处数据库名即可
+            + "seed_project"//替换此处数据库名即可
             + "?useSSL=false&createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf8";
     private static final String JDBC_USERNAME = "root";
-    private static final String JDBC_PASSWORD = "123123";
+    private static final String JDBC_PASSWORD = "";
     private static final String JDBC_DIVER_CLASS_NAME = "com.mysql.jdbc.Driver";
 
     private static final String PROJECT_PATH = System.getProperty("user.dir");//项目在硬盘上的基础路径
@@ -39,8 +41,10 @@ public class CodeGenerator {
     private static final String DATE = new SimpleDateFormat("yyyy/MM/dd").format(new Date());//@date
 
     public static void main(String[] args) {
-        genCode("user");
+        //genCode("system_role", "seed_user");
         //genCodeByCustomModelName("输入表名","输入自定义Model名称");
+        System.out.println(JSON.toJSON(new JwtUser(null, "password","name"
+                , true, true,true,false)));
     }
 
     /**
