@@ -26,7 +26,7 @@ CREATE TABLE `seed_user`  (
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户名',
   `password` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '密码',
   `phone` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '手机号',
-  `role_id` tinyint(3) NULL DEFAULT NULL COMMENT COMMENT '角色id，tinyint类型最大127，跟角色相关',
+  `role_id` tinyint(3) NULL DEFAULT NULL COMMENT '角色id，tinyint类型最大127，跟角色相关',
   `user_id` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '字符型用户id',
   `enable` tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否有效',
   `create_time` timestamp(0) NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '注册时间',
@@ -49,8 +49,8 @@ CREATE TABLE `system_role`  (
 -- ----------------------------
 -- Records of system_role
 -- ----------------------------
-INSERT INTO `system_role` (`name`, `value`) VALUES ('超级管理员', 9999);
-INSERT INTO `system_role` (`name`, `value`) VALUES ('管理员', 999);
-INSERT INTO `system_role` (`name`, `value`) VALUES ('用户', 9);
+INSERT INTO `system_role` (`id`, `name`, `value`) VALUES (1, '超级管理员', 9999);
+INSERT INTO `system_role` (`id`, `name`, `value`) VALUES (2, '管理员', 999);
+INSERT INTO `system_role` (`id`, `name`, `value`) VALUES (3, '用户', 9);
 
 SET FOREIGN_KEY_CHECKS = 1;
