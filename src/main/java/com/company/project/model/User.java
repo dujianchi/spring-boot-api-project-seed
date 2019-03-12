@@ -4,7 +4,7 @@ import java.util.Date;
 import javax.persistence.*;
 
 @Table(name = "seed_user")
-public class SeedUser {
+public class User {
     /**
      * 数字id
      */

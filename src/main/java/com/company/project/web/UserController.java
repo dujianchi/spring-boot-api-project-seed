@@ -1,10 +1,15 @@
 package com.company.project.web;
 import com.company.project.core.Result;
 import com.company.project.core.ResultGenerator;
-import com.company.project.model.SeedUser;
-import com.company.project.service.SeedUserService;
+import com.company.project.jwt.JwtTokenUtil;
+import com.company.project.jwt.JwtUser;
+import com.company.project.jwt.JwtUserDetailsServiceImpl;
+import com.company.project.model.User;
+import com.company.project.service.UserService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,42 +19,47 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
-* Created by CodeGenerator on 2019/03/11.
+* Created by CodeGenerator on 2019/03/12.
 */
 @RestController
-@RequestMapping("/seed/user")
-public class SeedUserController {
+@RequestMapping("/user")
+public class UserController {
     @Resource
-    private SeedUserService seedUserService;
+    private UserService userService;
+    @Autowired
+    private JwtTokenUtil mTokenUtil;
 
     @PostMapping("/add")
-    public Result add(SeedUser seedUser) {
-        seedUserService.save(seedUser);
-        return ResultGenerator.genSuccessResult();
+    public Result add(User user) {
+        userService.save(user);
+        final String token = mTokenUtil.generateToken(new JwtUser(user));
+        return ResultGenerator.genSuccessResult(token);
     }
 
+    @PreAuthorize("hasRole('"+ JwtUserDetailsServiceImpl.ADMIN +"')")
     @PostMapping("/delete")
     public Result delete(@RequestParam Integer id) {
-        seedUserService.deleteById(id);
+        userService.deleteById(id);
         return ResultGenerator.genSuccessResult();
     }
 
     @PostMapping("/update")
-    public Result update(SeedUser seedUser) {
-        seedUserService.update(seedUser);
+    public Result update(User user) {
+        userService.update(user);
         return ResultGenerator.genSuccessResult();
     }
 
     @PostMapping("/detail")
     public Result detail(@RequestParam Integer id) {
-        SeedUser seedUser = seedUserService.findById(id);
-        return ResultGenerator.genSuccessResult(seedUser);
+        User user = userService.findById(id);
+        return ResultGenerator.genSuccessResult(user);
     }
 
+    @PreAuthorize("hasRole('"+ JwtUserDetailsServiceImpl.ADMIN +"')")
     @PostMapping("/list")
     public Result list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size) {
         PageHelper.startPage(page, size);
-        List<SeedUser> list = seedUserService.findAll();
+        List<User> list = userService.findAll();
         PageInfo pageInfo = new PageInfo(list);
         return ResultGenerator.genSuccessResult(pageInfo);
     }
