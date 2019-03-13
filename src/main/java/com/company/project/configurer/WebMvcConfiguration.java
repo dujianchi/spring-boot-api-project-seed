@@ -15,6 +15,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.lang.NonNull;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.AuthorizationServiceException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -67,6 +70,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     @Override
     public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {
         exceptionResolvers.add(new HandlerExceptionResolver() {
+            @Override
             public ModelAndView resolveException(@NonNull HttpServletRequest request
                     , @NonNull HttpServletResponse response, Object handler, @NonNull Exception e) {
                 Result result = new Result();
@@ -91,6 +95,10 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                                 .append(error.getDefaultMessage());
                     }
                     result.setCode(ResultCode.FAIL).setMessage(resultBuilder.toString());
+                } else if (e instanceof AuthorizationServiceException) {
+                    result.setCode(ResultCode.UNAUTHORIZED).setMessage("token验证失败");
+                } else if (e instanceof AccessDeniedException || e instanceof InsufficientAuthenticationException) {
+                    result.setCode(ResultCode.ACCESS_DENIED).setMessage("接口 [" + request.getRequestURI() + "] 不允许访问");
                 } else {
                     result.setCode(ResultCode.INTERNAL_SERVER_ERROR).setMessage("接口 [" + request.getRequestURI() + "] 内部错误，请联系管理员");
                     String message;

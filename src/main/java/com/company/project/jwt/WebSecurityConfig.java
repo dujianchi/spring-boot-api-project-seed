@@ -18,11 +18,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * 安全模块配置
@@ -43,16 +46,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public WebSecurityConfig(UserDetailsService userDetailsService, JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter, EntryPointUnauthorizedHandler entryPointUnauthorizedHandler, RestAccessDeniedHandler restAccessDeniedHandler) {
-        this.mUserDetailsService = userDetailsService;
-        this.mJwtAuthenticationTokenFilter = jwtAuthenticationTokenFilter;
-        this.mEntryPointUnauthorizedHandler = entryPointUnauthorizedHandler;
-        this.mRestAccessDeniedHandler = restAccessDeniedHandler;
-        this.mPasswordEncoder = new BCryptPasswordEncoder();
+        mUserDetailsService = userDetailsService;
+        mJwtAuthenticationTokenFilter = jwtAuthenticationTokenFilter;
+        mEntryPointUnauthorizedHandler = entryPointUnauthorizedHandler;
+        mRestAccessDeniedHandler = restAccessDeniedHandler;
+        mPasswordEncoder = new BCryptPasswordEncoder();
     }
 
     @Autowired
     public void configureAuthentication(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-        authenticationManagerBuilder.userDetailsService(this.mUserDetailsService).passwordEncoder(mPasswordEncoder);
+        authenticationManagerBuilder.userDetailsService(mUserDetailsService).passwordEncoder(mPasswordEncoder);
     }
 
     @Override
@@ -76,7 +79,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and().headers().cacheControl();// 禁用缓存
         httpSecurity.addFilterBefore(mJwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
-        httpSecurity.exceptionHandling().authenticationEntryPoint(mEntryPointUnauthorizedHandler).accessDeniedHandler(mRestAccessDeniedHandler);
+        httpSecurity.exceptionHandling()
+                .authenticationEntryPoint(mEntryPointUnauthorizedHandler)
+                .accessDeniedHandler(mRestAccessDeniedHandler);
     }
 
     /**
@@ -109,5 +114,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             throw new ServiceException(e.getMessage());
         }
 
+    }
+
+    @Component
+    public static class MyAuthenticationFailureHandler implements AuthenticationFailureHandler {
+
+        @Override
+        public void onAuthenticationFailure(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
+            throw new ServiceException("没有访问权限");
+        }
     }
 }

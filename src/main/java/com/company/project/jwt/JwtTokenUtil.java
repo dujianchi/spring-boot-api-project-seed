@@ -77,12 +77,13 @@ public class JwtTokenUtil implements Serializable {
      * @return 用户名
      */
     public String getUsernameFromToken(String token) {
-        String username;
+        String username = null;
         try {
             Claims claims = getClaimsFromToken(token);
-            username = claims.getSubject();
+            Object user = claims.get(KEY_TOKEN_USER);
+            if (user != null) username = String.valueOf(user);
         } catch (Exception e) {
-            username = null;
+            e.printStackTrace();
         }
         return username;
     }

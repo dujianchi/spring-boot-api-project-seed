@@ -36,7 +36,7 @@ public class UserController {
         return ResultGenerator.genSuccessResult(token);
     }
 
-    @PreAuthorize("hasRole('"+ JwtUserDetailsServiceImpl.ADMIN +"')")
+    @PreAuthorize("hasRole('admin')")
     @PostMapping("/delete")
     public Result delete(@RequestParam Integer id) {
         userService.deleteById(id);
@@ -55,7 +55,7 @@ public class UserController {
         return ResultGenerator.genSuccessResult(user);
     }
 
-    @PreAuthorize("hasRole('"+ JwtUserDetailsServiceImpl.ADMIN +"')")
+    @PreAuthorize("hasRole('admin')")
     @PostMapping("/list")
     public Result list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size) {
         PageHelper.startPage(page, size);

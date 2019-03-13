@@ -23,7 +23,8 @@ import java.util.List;
 @Service
 public class JwtUserDetailsServiceImpl implements UserDetailsService {
 
-    public static final String SUPER_ADMIN = "super_admin", ADMIN = "admin", USER = "user", NONE = "none";
+    //说是权限一定要role开头？
+    public static final String SUPER_ADMIN = "role_super", ADMIN = "role_admin", USER = "role_user", NONE = "role_none";
 
     private final UserService mUserService;
 
