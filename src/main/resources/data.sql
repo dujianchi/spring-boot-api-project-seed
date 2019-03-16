@@ -49,8 +49,8 @@ CREATE TABLE `system_role`  (
 -- ----------------------------
 -- Records of system_role
 -- ----------------------------
-INSERT INTO `system_role` (`id`, `name`, `value`) VALUES (1, '超级管理员', 9999);
-INSERT INTO `system_role` (`id`, `name`, `value`) VALUES (2, '管理员', 999);
-INSERT INTO `system_role` (`id`, `name`, `value`) VALUES (3, '用户', 9);
+INSERT OR REPLACE INTO `system_role` (`id`, `name`, `value`) VALUES (1, '超级管理员', 9999);
+INSERT OR REPLACE INTO `system_role` (`id`, `name`, `value`) VALUES (2, '管理员', 999);
+INSERT OR REPLACE INTO `system_role` (`id`, `name`, `value`) VALUES (3, '用户', 9);
 
 SET FOREIGN_KEY_CHECKS = 1;

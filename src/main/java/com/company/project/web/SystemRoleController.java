@@ -5,6 +5,7 @@ import com.company.project.model.SystemRole;
 import com.company.project.service.SystemRoleService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,6 +19,7 @@ import java.util.List;
 */
 @RestController
 @RequestMapping("/system/role")
+@PreAuthorize("hasRole('admin')")
 public class SystemRoleController {
     @Resource
     private SystemRoleService systemRoleService;

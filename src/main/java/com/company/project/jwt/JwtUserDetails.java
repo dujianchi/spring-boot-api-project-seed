@@ -1,6 +1,5 @@
 package com.company.project.jwt;
 
-import com.company.project.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,18 +13,14 @@ import java.util.Collection;
  * @author hackyo
  * Created on 2017/12/8 9:20.
  */
-public class JwtUser implements UserDetails {
+public class JwtUserDetails implements UserDetails {
 
     private final String mUserId;
     private final String mPassword;
     private final Collection<? extends GrantedAuthority> mAuthorities;
 
-    public JwtUser(User user) {
-        this(String.valueOf(user.getId()), user.getPassword(), JwtUserDetailsServiceImpl.toGrantedAuthorities(user.getRoleId()));
-    }
-
     @Autowired
-    JwtUser(String userId, String password, Collection<? extends GrantedAuthority> authorities) {
+    public JwtUserDetails(String userId, String password, Collection<? extends GrantedAuthority> authorities) {
         mUserId = userId;
         mPassword = password;
         mAuthorities = authorities;
@@ -42,6 +37,7 @@ public class JwtUser implements UserDetails {
         return mPassword;
     }
 
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return mAuthorities;

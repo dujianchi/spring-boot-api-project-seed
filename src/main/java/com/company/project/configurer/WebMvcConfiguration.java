@@ -6,6 +6,7 @@ import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.company.project.core.Result;
 import com.company.project.core.ResultCode;
 import com.company.project.core.ServiceException;
+import com.company.project.util.ResponseUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -114,7 +115,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
                     }
                     logger.error(message, e);
                 }
-                responseResult(response, result);
+                ResponseUtils.responseResult(response, result);
                 return new ModelAndView();
             }
 
@@ -145,22 +146,11 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 
                         Result result = new Result();
                         result.setCode(ResultCode.UNAUTHORIZED).setMessage("签名认证失败");
-                        responseResult(response, result);
+                        ResponseUtils.responseResult(response, result);
                         return false;
                     }
                 }
             });
-        }
-    }
-
-    private void responseResult(HttpServletResponse response, Result result) {
-        response.setCharacterEncoding("UTF-8");
-        response.setHeader("Content-type", "application/json;charset=UTF-8");
-        response.setStatus(200);
-        try {
-            response.getWriter().write(JSON.toJSONString(result));
-        } catch (IOException ex) {
-            logger.error(ex.getMessage());
         }
     }
 

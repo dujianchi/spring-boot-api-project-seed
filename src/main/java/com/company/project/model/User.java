@@ -5,6 +5,16 @@ import javax.persistence.*;
 
 @Table(name = "seed_user")
 public class User {
+
+    public User() { }
+
+    public User(String name, String password, String phone, String userId) {
+        this.name = name;
+        this.password = password;
+        this.phone = phone;
+        this.userId = userId;
+    }
+
     /**
      * 数字id
      */

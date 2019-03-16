@@ -1,7 +1,9 @@
 package com.company.project.jwt;
 
 
-import com.company.project.core.ServiceException;
+import com.company.project.core.ResultCode;
+import com.company.project.core.ResultGenerator;
+import com.company.project.util.ResponseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -45,7 +47,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final PasswordEncoder mPasswordEncoder;
 
     @Autowired
-    public WebSecurityConfig(UserDetailsService userDetailsService, JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter, EntryPointUnauthorizedHandler entryPointUnauthorizedHandler, RestAccessDeniedHandler restAccessDeniedHandler) {
+    public WebSecurityConfig(JwtUserDetailsServiceImpl userDetailsService, JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter, EntryPointUnauthorizedHandler entryPointUnauthorizedHandler, RestAccessDeniedHandler restAccessDeniedHandler) {
         mUserDetailsService = userDetailsService;
         mJwtAuthenticationTokenFilter = jwtAuthenticationTokenFilter;
         mEntryPointUnauthorizedHandler = entryPointUnauthorizedHandler;
@@ -78,10 +80,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/**").permitAll()
                 .anyRequest().authenticated()
                 .and().headers().cacheControl();// 禁用缓存
-        httpSecurity.addFilterBefore(mJwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
         httpSecurity.exceptionHandling()
                 .authenticationEntryPoint(mEntryPointUnauthorizedHandler)
                 .accessDeniedHandler(mRestAccessDeniedHandler);
+        httpSecurity.addFilterBefore(mJwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     /**
@@ -95,7 +97,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         @Override
         public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) {
-            throw new ServiceException(e.getMessage());
+            ResponseUtils.responseResult(response, ResultGenerator.genFailResult(e.getMessage()).setCode(ResultCode.UNAUTHORIZED));
         }
 
     }
@@ -111,7 +113,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         @Override
         public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e) {
-            throw new ServiceException(e.getMessage());
+            ResponseUtils.responseResult(response, ResultGenerator.genFailResult(e.getMessage()).setCode(ResultCode.ACCESS_DENIED));
         }
 
     }
@@ -120,8 +122,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public static class MyAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
         @Override
-        public void onAuthenticationFailure(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
-            throw new ServiceException("没有访问权限");
+        public void onAuthenticationFailure(HttpServletRequest httpServletRequest, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException {
+            ResponseUtils.responseResult(response, ResultGenerator.genFailResult(e.getMessage()).setCode(ResultCode.UNAUTHORIZED));
         }
     }
 }
