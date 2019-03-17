@@ -61,7 +61,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public Result login(String name, String password, String phone) {
+    public Result login(String password, String phone) {
         if (StringUtils.isEmpty(password)) {
             return ResultGenerator.genFailResult("密码不能为空");
         }
@@ -89,7 +89,7 @@ public class UserController {
         return ResultGenerator.genSuccessResult();
     }
 
-    @PreAuthorize("principal.username.equals(#user.id)")
+    @PreAuthorize("principal.username.equals(#user.id.toString())")
     @PostMapping("/update")
     public Result update(HttpServletRequest request, User user) {
         String id = mTokenUtil.getIdFromRequest(request);
